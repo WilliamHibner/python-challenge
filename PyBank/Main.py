@@ -17,7 +17,10 @@ total_months = 0
 total_net = 0
 average_change = 0
 greatest_increase = 0
+greatest_increase_date = 0
 greatest_decrease = 0
+greatest_decrease_date = 0
+prevRev = 0
 
 # I need to calculate total row for the entire csv file
 # open csv
@@ -29,48 +32,43 @@ with open(financial_data) as budget_data:
     budget_data_reader = csv.DictReader(budget_data)
 
     count = 0
-    for r in budget_data_reader:
-        count +=1
-        print(r['Revenue'], count)
+    total_net = 0
+    Average = []
+    for row in budget_data_reader:
+        #number of months
+        count += 1
+        #total revenue
+        total_net = total_net + int(row['Revenue'])
+        #average Change
+        Change = int(row['Revenue']) - prevRev
+        Average.append(Change)
+        prevRev = int(row['Revenue'])
+        #greatest increase
+        if greatest_increase < Change:
+            greatest_increase = Change
+            greatest_increase_date = row["Date"]
+        #greatest decrease
+        if greatest_decrease > Change:
+            greatest_decrease = Change
+            greatest_decrease_date = row["Date"]
+      
+        
 
     
 #find total number of months included in the dataset
-
+total_months = count
 
 #find total net amount of "Profit/Losses" over the entire period
-#set total revenue = 0 
-# greatest_inc = revenue[0]
-# greatest_dec = revenue[0]
-# total_revenue = 0
 
-# #loop through revenue indices and compare # to find greatest inc and dec
-# #also add each revenue to total revenue
-# for r in range(len(revenue)):
-#     if revenue[r] >= greatest_inc:
-#         greatest_inc = revenue[r]
-#         great_inc_month = months[r]
-#     elif revenue[r] <= greatest_dec:
-#         greatest_dec = revenue[r]
-#         great_dec_month = months[r]
-#     total_revenue += revenue[r]
+#calc average change
+average_change = sum(Average)/len(Average)
 
-# #Calculate average change in "Profit/Losses" between months over the entire period
-# average_change = round(total_revenue/total_months, 2)
+print("Financial Analysis")
+print("----------------------------")
+print("Total Months: "+str(total_months))
+print("Total: $"+str(total_net))
+print("Average  Change: $"+str(average_change))
+print("Greatest Increase in Profits: "+ greatest_increase_date + " ($" + str(greatest_increase) + ")")
+print("Greatest Decrease in Profits: "+ greatest_decrease_date + " ($" + str(greatest_decrease) + ")")
 
-# #sets path for output file
-# output_dest = os.path.join('Output','pybank_output_' + str(file_num) + '.txt')
-
-# # opens the output destination in write mode and prints the summary
-# with open(output_dest, 'w') as writefile:
-#     writefile.writelines('Financial Analysis\n')
-#     writefile.writelines('----------------------------' + '\n')
-#     writefile.writelines('Total Months: ' + str(total_months) + '\n')
-#     writefile.writelines('Total Revenue: $' + str(total_revenue) + '\n')
-#     writefile.writelines('Average Revenue Change: $' + str(average_change) + '\n')
-#     writefile.writelines('Greatest Increase in Revenue: ' + great_inc_month + ' ($' + str(greatest_inc) + ')'+ '\n')
-#     writefile.writelines('Greatest Decrease in Revenue: ' + great_dec_month + ' ($' + str(greatest_dec) + ')')
-
-# #opens the output file in r mode and prints to terminal
-# with open(output_dest, 'r') as readfile:
-#     print(readfile.read())
 
